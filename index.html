@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>مركز التحميل</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>📥 مركز تنزيل الملفات</h1>
+
+<input type="password" id="adminPass" placeholder="كلمة سر الأدمن">
+<button onclick="login()">دخول</button>
+
+<div id="adminPanel" class="hidden">
+  <h2>لوحة الأدمن</h2>
+  <input type="text" id="fileName" placeholder="اسم الملف">
+  <input type="text" id="fileLink" placeholder="رابط الملف (files/...)">
+  <button onclick="addFile()">نشر الملف</button>
+</div>
+
+<hr>
+
+<div id="filesList"></div>
+
+<script src="script.js"></script>
+</body>
+</html>

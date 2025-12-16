@@ -1,0 +1,22 @@
+body {
+  font-family: Tahoma;
+  background: #f4f4f4;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+input, button {
+  padding: 10px;
+  margin: 5px;
+}
+
+.file {
+  background: white;
+  padding: 10px;
+  margin: 10px auto;
+  width: 60%;
+  border-radius: 5px;
+}
