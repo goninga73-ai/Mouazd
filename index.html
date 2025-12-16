@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع تنزيل الملفات من GitHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --gray-color: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark-color);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* رأس الصفحة */
+        header {
+            background: linear-gradient(to left, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+        }
+        
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .admin-link {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .admin-link:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* قسم الملفات */
+        .files-section {
+            margin-top: 30px;
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            font-size: 24px;
+        }
+        
+        .section-title i {
+            color: var(--primary-color);
+        }
+        
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .file-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .file-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .file-icon {
+            font-size: 40px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .file-date {
+            color: var(--gray-color);
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: auto;
+            text-align: center;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .no-files {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .no-files i {
+            font-size: 60px;
+            color: var(--gray-color);
+            margin-bottom: 20px;
+        }
+        
+        .no-files h3 {
+            color: var(--dark-color);
+            margin-bottom: 10px;
+        }
+        
+        /* قسم المشرف */
+        .admin-section {
+            margin-top: 40px;
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .close-admin {
+            background-color: var(--gray-color);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .admin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-group input {
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s;
+            flex: 1;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .btn-secondary {
+            background-color: var(--gray-color);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #475569;
+        }
+        
+        .password-prompt {
+            text-align: center;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            margin-top: 40px;
+        }
+        
+        .password-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .password-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        
+        .password-input button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-success {
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        /* التذييل */
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: var(--gray-color);
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        /* تصميم متجاوب */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .files-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .password-input {
+                flex-direction: column;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- رأس الصفحة -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-cloud-download-alt"></i>
+                    <h1>مركز تنزيل الملفات</h1>
+                </div>
+                <a href="#" class="admin-link" id="adminToggle">
+                    <i class="fas fa-user-shield"></i> لوحة المشرف
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- رسائل التنبيه -->
+        <div id="alertMessage" class="alert"></div>
+
+        <!-- قسم الملفات المتاحة -->
+        <section class="files-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-download"></i> الملفات المتاحة للتنزيل
+            </h2>
+            
+            <div class="files-grid" id="filesContainer">
+                <!-- الملفات سيتم عرضها هنا عبر JavaScript -->
+            </div>
+        </section>
+
+        <!-- قسم المشرف (محمي بكلمة المرور) -->
+        <section class="admin-section" id="adminSection">
+            <div class="admin-header">
+                <h2 class="section-title">
+                    <i class="fas fa-user-cog"></i> لوحة تحكم المشرف
+                </h2>
+                <button class="close-admin" id="closeAdmin">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form class="admin-form" id="adminForm">
+                <div class="form-group">
+                    <label for="fileName">اسم الملف</label>
+                    <input type="text" id="fileName" placeholder="مثال: كتاب البرمجة.pdf" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="fileUrl">رابط الملف على GitHub</label>
+                    <input type="url" id="fileUrl" placeholder="https://raw.githubusercontent.com/username/repository/main/folder/file.pdf" required>
+                    <small>يجب أن يكون الرابط مباشراً للتنزيل (Raw)</small>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> إضافة ملف
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="resetFiles">
+                        <i class="fas fa-redo"></i> إعادة تعيين الملفات
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- طلب كلمة المرور للمشرف -->
+        <section class="password-prompt" id="passwordPrompt">
+            <i class="fas fa-lock fa-2x" style="color: var(--gray-color); margin-bottom: 15px;"></i>
+            <h3>الدخول إلى لوحة المشرف</h3>
+            <p>أدخل كلمة المرور للوصول إلى لوحة التحكم ونشر ملفات جديدة</p>
+            
+            <div class="password-input">
+                <input type="password" id="passwordInput" placeholder="كلمة المرور">
+                <button type="button" id="passwordSubmit">دخول</button>
+            </div>
+        </section>
+    </main>
+
+    <!-- تذييل الصفحة -->
+    <footer>
+        <div class="container">
+            <p>جميع الملفات متاحة للتنزيل المباشر من GitHub | تم التطوير باستخدام HTML و CSS و JavaScript</p>
+            <p>© 2023 مركز تنزيل الملفات. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        // عناصر DOM
+        const adminToggle = document.getElementById('adminToggle');
+        const adminSection = document.getElementById('adminSection');
+        const passwordPrompt = document.getElementById('passwordPrompt');
+        const closeAdmin = document.getElementById('closeAdmin');
+        const passwordInput = document.getElementById('passwordInput');
+        const passwordSubmit = document.getElementById('passwordSubmit');
+        const adminForm = document.getElementById('adminForm');
+        const filesContainer = document.getElementById('filesContainer');
+        const resetFilesBtn = document.getElementById('resetFiles');
+        const alertMessage = document.getElementById('alertMessage');
+
+        // كلمة المرور للمشرف
+        const ADMIN_PASSWORD = "123";
+
+        // بيانات الملفات (سيتم تحميلها من localStorage أو استخدام البيانات الافتراضية)
+        let files = [];
+
+        // تهيئة التطبيق
+        function initApp() {
+            loadFilesFromStorage();
+            renderFiles();
+            
+            // إضافة ملفات افتراضية إذا لم تكن هناك ملفات
+            if (files.length === 0) {
+                addDefaultFiles();
+            }
+            
+            // إضافة مستمعي الأحداث
+            setupEventListeners();
+        }
+
+        // تحميل الملفات من localStorage
+        function loadFilesFromStorage() {
+            const storedFiles = localStorage.getItem('fileDownloaderFiles');
+            if (storedFiles) {
+                files = JSON.parse(storedFiles);
+            }
+        }
+
+        // حفظ الملفات إلى localStorage
+        function saveFilesToStorage() {
+            localStorage.setItem('fileDownloaderFiles', JSON.stringify(files));
+        }
+
+        // إضافة ملفات افتراضية
+        function addDefaultFiles() {
+            const defaultFiles = [
+                {
+                    id: 1,
+                    name: "دليل HTML للمبتدئين",
+                    url: "https://raw.githubusercontent.com/mdn/beginner-html-site/gh-pages/styles.css",
+                    date: "2023-10-15",
+                    icon: "fas fa-code"
+                },
+                {
+                    id: 2,
+                    name: "كتاب CSS المتقدم",
+                    url: "https://raw.githubusercontent.com/twbs/bootstrap/main/README.md",
+                    date: "2023-10-10",
+                    icon: "fab fa-css3-alt"
+                },
+                {
+                    id: 3,
+                    name: "ملاحظات JavaScript",
+                    url: "https://raw.githubusercontent.com/javascript-tutorial/en.javascript.info/master/1-js/05-data-types/01-primitives-methods/article.md",
+                    date: "2023-10-05",
+                    icon: "fab fa-js"
+                },
+                {
+                    id: 4,
+                    name: "دليل GitHub الأساسي",
+                    url: "https://raw.githubusercontent.com/github/training-kit/main/README.md",
+                    date: "2023-09-28",
+                    icon: "fab fa-github"
+                }
+            ];
+            
+            files = defaultFiles;
+            saveFilesToStorage();
+        }
+
+        // عرض الملفات في الواجهة
+        function renderFiles() {
+            if (files.length === 0) {
+                filesContainer.innerHTML = `
+                    <div class="no-files">
+                        <i class="fas fa-folder-open"></i>
+                        <h3>لا توجد ملفات متاحة</h3>
+                        <p>قم بالدخول إلى لوحة المشرف لإضافة ملفات جديدة.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            filesContainer.innerHTML = files.map(file => `
+                <div class="file-card">
+                    <div class="file-icon">
+                        <i class="${file.icon || 'fas fa-file'}"></i>
+                    </div>
+                    <div class="file-name">${file.name}</div>
+                    <div class="file-date">تم النشر: ${file.date}</div>
+                    <a href="${file.url}" class="download-btn" target="_blank" download>
+                        <i class="fas fa-download"></i> تنزيل الملف
+                    </a>
+                </div>
+            `).join('');
+        }
+
+        // إضافة مستمعي الأحداث
+        function setupEventListeners() {
+            // تبديل عرض لوحة المشرف
+            adminToggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                passwordPrompt.style.display = 'block';
+                adminSection.classList.remove('active');
+            });
+            
+            // إغلاق لوحة المشرف
+            closeAdmin.addEventListener('click', function() {
+                adminSection.classList.remove('active');
+                passwordPrompt.style.display = 'none';
+            });
+            
+            // التحقق من كلمة المرور
+            passwordSubmit.addEventListener('click', function() {
+                const enteredPassword = passwordInput.value.trim();
+                
+                if (enteredPassword === ADMIN_PASSWORD) {
+                    adminSection.classList.add('active');
+                    passwordPrompt.style.display = 'none';
+                    passwordInput.value = '';
+                    showAlert('تم الدخول بنجاح إلى لوحة المشرف', 'success');
+                } else {
+                    showAlert('كلمة المرور غير صحيحة. حاول مرة أخرى.', 'error');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+            });
+            
+            // إدخال كلمة المرور باستخدام زر Enter
+            passwordInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    passwordSubmit.click();
+                }
+            });
+            
+            // إضافة ملف جديد
+            adminForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fileName = document.getElementById('fileName').value.trim();
+                const fileUrl = document.getElementById('fileUrl').value.trim();
+                
+                if (!fileName || !fileUrl) {
+                    showAlert('يرجى ملء جميع الحقول', 'error');
+                    return;
+                }
+                
+                // التحقق من أن الرابط من GitHub Raw
+                if (!fileUrl.includes('raw.githubusercontent.com')) {
+                    showAlert('يرجى استخدام رابط Raw المباشر من GitHub', 'error');
+                    return;
+                }
+                
+                // إنشاء معرف فريد للملف
+                const newFileId = files.length > 0 ? Math.max(...files.map(f => f.id)) + 1 : 1;
+                
+                // الحصول على التاريخ الحالي
+                const currentDate = new Date().toISOString().split('T')[0];
+                
+                // إضافة الملف الجديد
+                const newFile = {
+                    id: newFileId,
+                    name: fileName,
+                    url: fileUrl,
+                    date: currentDate,
+                    icon: getFileIcon(fileUrl)
+                };
+                
+                files.push(newFile);
+                saveFilesToStorage();
+                renderFiles();
+                
+                // إعادة تعيين النموذج
+                adminForm.reset();
+                
+                showAlert('تم إضافة الملف بنجاح وسيكون متاحاً للتنزيل', 'success');
+            });
+            
+            // إعادة تعيين الملفات إلى الافتراضية
+            resetFilesBtn.addEventListener('click', function() {
+                if (confirm('هل أنت متأكد من إعادة تعيين جميع الملفات؟ سيتم حذف جميع الملفات الحالية واستعادة الملفات الافتراضية.')) {
+                    addDefaultFiles();
+                    renderFiles();
+                    showAlert('تمت إعادة تعيين الملفات إلى الإعدادات الافتراضية', 'success');
+                }
+            });
+        }
+
+        // الحصول على الأيقونة المناسبة لنوع الملف
+        function getFileIcon(url) {
+            const extension = url.split('.').pop().toLowerCase();
+            
+            if (['pdf'].includes(extension)) return 'fas fa-file-pdf';
+            if (['doc', 'docx'].includes(extension)) return 'fas fa-file-word';
+            if (['xls', 'xlsx'].includes(extension)) return 'fas fa-file-excel';
+            if (['ppt', 'pptx'].includes(extension)) return 'fas fa-file-powerpoint';
+            if (['zip', 'rar', '7z'].includes(extension)) return 'fas fa-file-archive';
+            if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(extension)) return 'fas fa-file-image';
+            if (['mp4', 'avi', 'mov', 'mkv'].includes(extension)) return 'fas fa-file-video';
+            if (['mp3', 'wav', 'ogg'].includes(extension)) return 'fas fa-file-audio';
+            if (['html', 'css', 'js', 'json', 'xml'].includes(extension)) return 'fas fa-file-code';
+            
+            return 'fas fa-file';
+        }
+
+        // عرض رسائل التنبيه
+        function showAlert(message, type) {
+            alertMessage.textContent = message;
+            alertMessage.className = `alert alert-${type}`;
+            alertMessage.style.display = 'block';
+            
+            // إخفاء التنبيه بعد 4 ثوانٍ
+            setTimeout(() => {
+                alertMessage.style.display = 'none';
+            }, 4000);
+        }
+
+        // بدء التطبيق عند تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
